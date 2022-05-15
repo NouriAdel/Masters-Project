@@ -9,8 +9,14 @@ from gym_pybullet_drones.envs.BaseAviary import DroneModel, Physics, BaseAviary
 from gym_pybullet_drones.envs.single_agent_rl.BaseSingleAgentAviary import ActionType, ObservationType
 from gym_pybullet_drones.envs.multi_agent_rl.BaseMultiagentAviary import BaseMultiagentAviary
 
+import random
+
+timestep_counter = 0
+#new_goal = np.array([0, 0, 0.5])
+
 class LeaderFollowerAviary(BaseMultiagentAviary):
     """Multi-agent RL problem: leader-follower."""
+    
 
     ################################################################################
 
@@ -20,6 +26,7 @@ class LeaderFollowerAviary(BaseMultiagentAviary):
                  neighbourhood_radius: float=np.inf,
                  initial_xyzs=None,
                  initial_rpys=None,
+                 new_goal = np.array([0, 0, 0.5]), #Nouran
                  physics: Physics=Physics.PYB,
                  freq: int=240,
                  aggregate_phy_steps: int=1,
@@ -73,6 +80,9 @@ class LeaderFollowerAviary(BaseMultiagentAviary):
                          act=act
                          )
 
+
+        self.new_goal = new_goal
+
     ################################################################################
     
     def _computeReward(self):
@@ -84,9 +94,11 @@ class LeaderFollowerAviary(BaseMultiagentAviary):
             The reward value for each drone.
 
         """
+        global timestep_counter
+        timestep_counter = timestep_counter + 1
         rewards = {}
         states = np.array([self._getDroneStateVector(i) for i in range(self.NUM_DRONES)])
-        rewards[0] = -1 * np.linalg.norm(np.array([0, 0, 0.5]) - states[0, 0:3])**2
+        rewards[0] = -1 * np.linalg.norm(self.new_goal - states[0, 0:3])**2
         # rewards[1] = -1 * np.linalg.norm(np.array([states[1, 0], states[1, 1], 0.5]) - states[1, 0:3])**2 # DEBUG WITH INDEPENDENT REWARD 
         for i in range(1, self.NUM_DRONES):
             rewards[i] = -(1/self.NUM_DRONES) * np.linalg.norm(np.array([states[i, 0], states[i, 1], states[0, 2]]) - states[i, 0:3])**2
@@ -104,10 +116,16 @@ class LeaderFollowerAviary(BaseMultiagentAviary):
             one additional boolean value for key "__all__".
 
         """
+        global timestep_counter
         bool_val = True if self.step_counter/self.SIM_FREQ > self.EPISODE_LEN_SEC else False
         done = {i: bool_val for i in range(self.NUM_DRONES)}
         done["__all__"] = bool_val # True if True in done.values() else False
+        if bool_val and timestep_counter>=500:
+            timestep_counter = 0
+            goal_z = random.uniform(0.15,2)
+            self.new_goal = np.array([0,0,goal_z])
         return done
+	
 
     ################################################################################
     

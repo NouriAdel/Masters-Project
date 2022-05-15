@@ -45,6 +45,7 @@ from gym_pybullet_drones.envs.single_agent_rl.TakeoffAviary import TakeoffAviary
 from gym_pybullet_drones.envs.single_agent_rl.HoverAviary import HoverAviary
 from gym_pybullet_drones.envs.single_agent_rl.FlyThruGateAviary import FlyThruGateAviary
 from gym_pybullet_drones.envs.single_agent_rl.TuneAviary import TuneAviary
+from gym_pybullet_drones.envs.single_agent_rl.NewAviary import NewAviary
 from gym_pybullet_drones.envs.single_agent_rl.BaseSingleAgentAviary import ActionType, ObservationType
 
 import shared_constants
@@ -56,7 +57,7 @@ if __name__ == "__main__":
 
     #### Define and parse (optional) arguments for the script ##
     parser = argparse.ArgumentParser(description='Single agent reinforcement learning experiments script')
-    parser.add_argument('--env',        default='hover',      type=str,             choices=['takeoff', 'hover', 'flythrugate', 'tune'], help='Task (default: hover)', metavar='')
+    parser.add_argument('--env',        default='hover',      type=str,             choices=['takeoff', 'hover', 'flythrugate', 'tune', 'new'], help='Task (default: hover)', metavar='')
     parser.add_argument('--algo',       default='ppo',        type=str,             choices=['a2c', 'ppo', 'sac', 'td3', 'ddpg'],        help='RL agent (default: ppo)', metavar='')
     parser.add_argument('--obs',        default='kin',        type=ObservationType,                                                      help='Observation space (default: kin)', metavar='')
     parser.add_argument('--act',        default='one_d_rpm',  type=ActionType,                                                           help='Action space (default: one_d_rpm)', metavar='')
@@ -115,6 +116,12 @@ if __name__ == "__main__":
                                  )
     if env_name == "tune-aviary-v0":
         train_env = make_vec_env(TuneAviary,
+                                 env_kwargs=sa_env_kwargs,
+                                 n_envs=ARGS.cpu,
+                                 seed=0
+                                 )
+    if env_name == "new-aviary-v0":
+        train_env = make_vec_env(NewAviary,
                                  env_kwargs=sa_env_kwargs,
                                  n_envs=ARGS.cpu,
                                  seed=0
@@ -220,6 +227,12 @@ if __name__ == "__main__":
                                     seed=0
                                     )
         if env_name == "tune-aviary-v0": 
+            eval_env = make_vec_env(TuneAviary,
+                                    env_kwargs=sa_env_kwargs,
+                                    n_envs=1,
+                                    seed=0
+                                    )
+        if env_name == "new-aviary-v0": 
             eval_env = make_vec_env(TuneAviary,
                                     env_kwargs=sa_env_kwargs,
                                     n_envs=1,

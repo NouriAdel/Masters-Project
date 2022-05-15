@@ -46,6 +46,10 @@ from gym_pybullet_drones.envs.single_agent_rl.BaseSingleAgentAviary import Actio
 from gym_pybullet_drones.utils.Logger import Logger
 from gym_pybullet_drones.utils.utils import sync
 
+from ray.rllib.agents import ddpg ##Nouran
+from ray.rllib.agents.ddpg.ddpg_tf_policy import DDPGTFPolicy  ##Nouran
+from ray.rllib.agents.ddpg.td3 import TD3Trainer  ##Nouran
+
 import shared_constants
 
 OWN_OBS_VEC_SIZE = None # Modified at runtime
@@ -260,6 +264,12 @@ if __name__ == "__main__":
     agent = ppo.PPOTrainer(config=config)
     with open(ARGS.exp+'/checkpoint.txt', 'r+') as f:
         checkpoint = f.read()
+    #checkpoint = "/home/nouri/gym-pybullet-drones/experiments/learning/results/save-leaderfollower-2-cc-kin-rpm-04.05.2022_09.57.21/PPO/PPO_this-aviary-v0_cb4d9_00000_0_2022-04-05_09-57-25/checkpoint_000030/checkpoint-30"
+    #checkpoint = "/home/nouri/gym-pybullet-drones/experiments/learning/results/save-leaderfollower-2-cc-kin-one_d_rpm-04.13.2022_09.08.56/PPO/PPO_this-aviary-v0_60c6d_00000_0_2022-04-13_09-09-09/checkpoint_000122/checkpoint-122"
+    #checkpoint = "/home/nouri/gym-pybullet-drones/experiments/learning/results/save-leaderfollower-2-cc-kin-one_d_rpm-04.13.2022_12.25.28/PPO/PPO_this-aviary-v0_d2bde_00000_0_2022-04-13_12-25-37/checkpoint_000122/checkpoint-122"
+    #checkpoint = "/home/nouri/gym-pybullet-drones/experiments/learning/results/save-leaderfollower-3-cc-kin-one_d_rpm-04.14.2022_02.08.11/PPO/PPO_this-aviary-v0_c0d4c_00000_0_2022-04-14_02-08-19/checkpoint_000122/checkpoint-122"
+    #checkpoint = "/home/nouri/gym-pybullet-drones/experiments/learning/results/save-leaderfollower-3-cc-kin-one_d_rpm-04.14.2022_07.49.35/PPO/PPO_this-aviary-v0_72193_00000_0_2022-04-14_07-49-43/checkpoint_000171/checkpoint-171"
+    checkpoint = "/home/nouri/gym-pybullet-drones/experiments/learning/results/save-leaderfollower-3-cc-kin-one_d_rpm-05.10.2022_01.46.45/PPO/PPO_this-aviary-v0_11ca6_00000_0_2022-05-10_01-46-54/checkpoint_000244/checkpoint-244"
     agent.restore(checkpoint)
 
     #### Extract and print policies ############################
@@ -314,6 +324,7 @@ if __name__ == "__main__":
         print("[ERROR] unknown ActionType")
         exit()
     start = time.time()
+    test_env.new_goal = [0,0,0.5]
     for i in range(6*int(test_env.SIM_FREQ/test_env.AGGR_PHY_STEPS)): # Up to 6''
         #### Deploy the policies ###################################
         temp = {}
@@ -321,9 +332,19 @@ if __name__ == "__main__":
         temp[1] = policy1.compute_single_action(np.hstack([action[0], obs[0], obs[1]]))
         action = {0: temp[0][0], 1: temp[1][0]}
         obs, reward, done, info = test_env.step(action)
+        #print ("hi",obs[0][2])
+        #print ("hi",obs[1][2])
         test_env.render()
         if OBS==ObservationType.KIN: 
             for j in range(NUM_DRONES):
+                #print("hi",obs[j][10])
+                #test_env.new_goal = [0,0,10]
+                #state= np.hstack([obs[j][0:3], np.zeros(4), obs[j][3:15], np.resize(action[j], (4))])
+                #print("hi",state)
+                #print("hi",obs[j][0:3])
+                #print("hi",np.zeros(4))
+                #print("hi",obs[j][3:15])
+                #print("hi",np.resize(action[j], (4)))
                 logger.log(drone=j,
                            timestamp=i/test_env.SIM_FREQ,
                            state= np.hstack([obs[j][0:3], np.zeros(4), obs[j][3:15], np.resize(action[j], (4))]),

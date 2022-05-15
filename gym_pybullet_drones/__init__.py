@@ -43,6 +43,12 @@ register(
     entry_point='gym_pybullet_drones.envs.single_agent_rl:TuneAviary',
 )
 
+register(
+    id='new-aviary-v0',
+    #id = 'NewAviary'
+    entry_point='gym_pybullet_drones.envs.single_agent_rl:NewAviary',
+)
+
 
 
 
@@ -59,4 +65,9 @@ register(
 register(
     id='meetup-aviary-v0',
     entry_point='gym_pybullet_drones.envs.multi_agent_rl:MeetupAviary',
+)
+
+register(
+    id='newleader-aviary-v0',
+    entry_point='gym_pybullet_drones.envs.multi_agent_rl:NewLeaderAviary',
 )
