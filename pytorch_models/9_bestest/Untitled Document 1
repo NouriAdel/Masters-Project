@@ -1,0 +1,13 @@
+Hovering
+initial point: 0,0,0.1125
+goal: 0,0,0.25
+bounds: 0.6,0.6,0.6
+range of x and y: from -0.5 to 0.5
+range of z: from 0 to 0.5
+
+best result after 450k time steps
+took about 1 hour 20 mins
+
+good result appeared from 100k to 450k 
+
+the drone falls as the number of time steps increases 
