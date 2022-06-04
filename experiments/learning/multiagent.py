@@ -241,7 +241,12 @@ if __name__ == "__main__":
         "opponent_action": temp_env.action_space[0],
     })
     action_space = temp_env.action_space[0]
-
+    #print ("reset", temp_env.reset())
+    actions = np.random.randn(ARGS.num_drones,4)
+    actions = np.clip(actions, -1, 1)
+    print("actions", actions)
+    obs, rewards, dones, _ = temp_env.step(actions)
+    print("obs", obs)
     #### Note ##################################################
     # RLlib will create ``num_workers + 1`` copies of the
     # environment since one copy is needed for the driver process.
@@ -277,7 +282,7 @@ if __name__ == "__main__":
 
     #### Ray Tune stopping conditions ##########################
     stop = {
-        "timesteps_total": 120000, # 100000 ~= 10'
+        "timesteps_total": 1000, # 100000 ~= 10'
         # "episode_reward_mean": 0,
         # "training_iteration": 0,
     }

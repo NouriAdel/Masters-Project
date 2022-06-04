@@ -379,6 +379,10 @@ class BaseAviary(gym.Env):
         info = self._computeInfo()
         #### Advance the step counter ##############################
         self.step_counter = self.step_counter + (1 * self.AGGR_PHY_STEPS)
+        #print("obs", obs)  ##Nouran
+        #print("reward", reward)
+        #print("done", done)
+        #print("info", info)
         return obs, reward, done, info
     
     ################################################################################
@@ -907,10 +911,14 @@ class BaseAviary(gym.Env):
 
         """
         if isinstance(action, collections.Mapping):
+            #print("yes") 
+            #print(self.last_action)
             for k, v in action.items(): 
                 res_v = np.resize(v, (1, 4)) # Resize, possibly with repetition, to cope with different action spaces in RL subclasses
                 self.last_action[int(k), :] = res_v
+                #print(self.last_action)
         else: 
+            #print("action here", action)
             res_action = np.resize(action, (1, 4)) # Resize, possibly with repetition, to cope with different action spaces in RL subclasses
             self.last_action = np.reshape(res_action, (self.NUM_DRONES, 4))
     

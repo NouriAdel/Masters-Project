@@ -46,9 +46,9 @@ from gym_pybullet_drones.envs.single_agent_rl.BaseSingleAgentAviary import Actio
 from gym_pybullet_drones.utils.Logger import Logger
 from gym_pybullet_drones.utils.utils import sync
 
-from ray.rllib.agents import ddpg ##Nouran
-from ray.rllib.agents.ddpg.ddpg_tf_policy import DDPGTFPolicy  ##Nouran
-from ray.rllib.agents.ddpg.td3 import TD3Trainer  ##Nouran
+#from ray.rllib.agents import ddpg ##Nouran
+#from ray.rllib.agents.ddpg.ddpg_tf_policy import DDPGTFPolicy  ##Nouran
+#from ray.rllib.agents.ddpg.td3 import TD3Trainer  ##Nouran
 
 import shared_constants
 
@@ -330,21 +330,27 @@ if __name__ == "__main__":
         temp = {}
         temp[0] = policy0.compute_single_action(np.hstack([action[1], obs[1], obs[0]])) # Counterintuitive order, check params.json
         temp[1] = policy1.compute_single_action(np.hstack([action[0], obs[0], obs[1]]))
-        action = {0: temp[0][0], 1: temp[1][0]}
+        action = {0: temp[0], 1: temp[1]}
+        print ("action", action)
+        action = {0: np.array([1]), 1: np.array([0])}
         obs, reward, done, info = test_env.step(action)
+        print ("obs", obs)
         #print ("hi",obs[0][2])
         #print ("hi",obs[1][2])
-        test_env.render()
+        #test_env.render()
         if OBS==ObservationType.KIN: 
             for j in range(NUM_DRONES):
-                #print("hi",obs[j][10])
-                #test_env.new_goal = [0,0,10]
-                #state= np.hstack([obs[j][0:3], np.zeros(4), obs[j][3:15], np.resize(action[j], (4))])
-                #print("hi",state)
-                #print("hi",obs[j][0:3])
-                #print("hi",np.zeros(4))
-                #print("hi",obs[j][3:15])
-                #print("hi",np.resize(action[j], (4)))
+                # print(NUM_DRONES)
+                # #print("hi",obs[j][10])
+                # #test_env.new_goal = [0,0,10]
+                # state= np.hstack([obs[j][0:3], np.zeros(4), obs[j][3:15], np.resize(action[j], (4))])
+                # print("hi",state)
+                # #print("hi",obs[j][0:3])
+                # #print("hi",np.zeros(4))
+                # print("j", j)
+                # #print("hi",obs[j][3:11])
+                # print(len(state))
+                # #print("hi",np.resize(action[j], (4)))
                 logger.log(drone=j,
                            timestamp=i/test_env.SIM_FREQ,
                            state= np.hstack([obs[j][0:3], np.zeros(4), obs[j][3:15], np.resize(action[j], (4))]),
