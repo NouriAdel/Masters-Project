@@ -88,15 +88,15 @@ def td3(n_episodes=700, max_t=500, consecutive_episodes = 100,
                                t, learn_every, n_experiences)
 
             states = next_states
-            print("########### before #########")
-            print(rewards)
+            #print("########### before #########")
+            #print(rewards)
             data = rewards.items()
             data = list(data)
-            print(rewards[0])
+            #print(rewards[0])
             data = [data[0][1], data[1][1]]
             rewards = np.array(data)
-            print("########### After #########")
-            print(rewards)
+            #print("########### After #########")
+            #print(rewards)
 
             agents_rewards += rewards
 

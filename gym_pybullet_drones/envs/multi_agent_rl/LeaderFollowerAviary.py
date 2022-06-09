@@ -120,6 +120,8 @@ class LeaderFollowerAviary(BaseMultiagentAviary):
         bool_val = True if self.step_counter/self.SIM_FREQ > self.EPISODE_LEN_SEC else False
         done = {i: bool_val for i in range(self.NUM_DRONES)}
         done["__all__"] = bool_val # True if True in done.values() else False
+        #print("done in", done)
+        #print("LENGTH", self.step_counter)
         if bool_val and timestep_counter>=500:
             timestep_counter = 0
             goal_z = random.uniform(0.15,2)
